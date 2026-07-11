@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-concrete: #DCD8CE;
+  --color-ink: #1C1B19;
+  --color-steel: #3D5A73;
+  --color-amber: #E8862B;
+  --color-paper: #FAFAF8;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-paper text-ink font-body antialiased;
+}
+
+::selection {
+  @apply bg-steel text-paper;
+}
+
+.blueprint-line {
+  stroke: #3D5A73;
+  stroke-width: 1.2;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.input {
+  @apply w-full border border-ink/20 bg-paper px-4 py-3 font-body text-ink outline-none focus:border-steel;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
