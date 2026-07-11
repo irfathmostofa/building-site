@@ -22,6 +22,10 @@ export default function Navbar() {
     site_name: "Meridian Builders",
   });
   const location = useLocation();
+  const isHome = location.pathname === "/";
+  // Only the home page has a full-bleed dark hero behind the navbar,
+  // so only there can the navbar start transparent and still be legible.
+  const solid = scrolled || !isHome;
 
   useEffect(() => {
     supabase
@@ -39,6 +43,7 @@ export default function Navbar() {
       setScrolled(window.scrollY > 40);
     }
     window.addEventListener("scroll", onScroll);
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -47,7 +52,7 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 z-50 w-full transition-colors duration-300 ${
-        scrolled
+        solid
           ? "bg-ink/95 shadow-lg shadow-ink/10 backdrop-blur-sm"
           : "bg-gradient-to-b from-ink/85 to-transparent"
       }`}
@@ -81,7 +86,7 @@ export default function Navbar() {
                   <span
                     className={
                       isActive
-                        ? "text-dark"
+                        ? "text-amber"
                         : "text-paper/80 transition-colors group-hover:text-paper"
                     }
                   >
