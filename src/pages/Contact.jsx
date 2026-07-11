@@ -2,7 +2,12 @@ import { useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
   const [status, setStatus] = useState("idle"); // idle | submitting | success | error
 
   function handleChange(e) {
@@ -22,7 +27,7 @@ export default function Contact() {
   }
 
   return (
-    <div className="px-6 pb-28 pt-36 md:px-12">
+    <div className="px-6 pb-28 pt-36 md:px-12" id="top">
       <div className="mx-auto max-w-2xl">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
           Contact
@@ -37,9 +42,27 @@ export default function Contact() {
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="mt-10 space-y-6">
-            <Field label="Name" name="name" value={form.name} onChange={handleChange} required />
-            <Field label="Email" name="email" type="email" value={form.email} onChange={handleChange} required />
-            <Field label="Phone" name="phone" value={form.phone} onChange={handleChange} />
+            <Field
+              label="Name"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+            <Field
+              label="Email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+            <Field
+              label="Phone"
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+            />
             <div>
               <label className="font-mono text-xs uppercase tracking-widest text-ink/60">
                 Message

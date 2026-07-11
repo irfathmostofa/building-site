@@ -6,6 +6,16 @@ import BuildingCard from "../components/BuildingCard";
 import { useBuildings } from "../hooks/useBuildings";
 import { supabase } from "../lib/supabaseClient";
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
 export default function Home() {
   const { buildings: featured, loading } = useBuildings({ featuredOnly: true });
   const [settings, setSettings] = useState(null);
@@ -14,11 +24,23 @@ export default function Home() {
   const [productsPreview, setProductsPreview] = useState([]);
 
   useEffect(() => {
-    supabase.from("site_settings").select("*").eq("id", 1).single()
+    supabase
+      .from("site_settings")
+      .select("*")
+      .eq("id", 1)
+      .single()
       .then(({ data }) => setSettings(data));
-    supabase.from("gallery_images").select("*").order("sort_order").limit(6)
+    supabase
+      .from("gallery_images")
+      .select("*")
+      .order("sort_order")
+      .limit(6)
       .then(({ data }) => setGalleryPreview(data ?? []));
-    supabase.from("products").select("*, product_categories(name)").eq("featured", true).limit(3)
+    supabase
+      .from("products")
+      .select("*, product_categories(name)")
+      .eq("featured", true)
+      .limit(3)
       .then(({ data }) => setProductsPreview(data ?? []));
   }, []);
 
@@ -55,30 +77,46 @@ export default function Home() {
       ) : (
         <div className="flex h-screen items-center justify-center bg-ink px-6 text-center">
           <p className="font-mono text-sm text-concrete">
-            {loading ? "Loading…" : "Mark a building as featured (or set a hero building in /admin/hero) to power the hero."}
+            {loading
+              ? "Loading…"
+              : "Mark a building as featured (or set a hero building in /admin/hero) to power the hero."}
           </p>
         </div>
       )}
 
       {/* Intro statement */}
-      <section className="mx-auto max-w-4xl px-6 py-20 text-center md:px-12 md:py-28">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
+      <motion.section
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={stagger}
+        className="mx-auto max-w-4xl px-6 py-20 text-center md:px-12 md:py-28"
+      >
+        <motion.p
+          variants={fadeUp}
+          transition={{ duration: 0.5 }}
+          className="font-mono text-xs uppercase tracking-[0.3em] text-steel"
+        >
           Est. from ground up
-        </p>
-        <h2 className="mt-6 font-display text-2xl font-medium leading-snug text-ink sm:text-3xl md:text-4xl">
+        </motion.p>
+        <motion.h2
+          variants={fadeUp}
+          transition={{ duration: 0.6 }}
+          className="mt-6 font-display text-2xl font-medium leading-snug text-ink sm:text-3xl md:text-4xl"
+        >
           {settings?.intro_heading ||
             "Every building starts as a line on paper. We're proud of every stage between that first line and the last coat of paint."}
-        </h2>
-      </section>
+        </motion.h2>
+      </motion.section>
 
       {/* About us, with image */}
       <section className="px-6 pb-20 md:px-12 md:pb-28">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 md:grid-cols-2 md:items-center md:gap-16">
+        <div className="mx-auto grid max-w-8xl grid-cols-1 gap-10 md:grid-cols-2 md:items-center md:gap-16">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="order-2 md:order-1"
           >
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
@@ -96,14 +134,22 @@ export default function Home() {
             </Link>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
+            initial={{ opacity: 0, scale: 0.94 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5 }}
-            className="order-1 aspect-[4/3] bg-concrete md:order-2"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="order-1 aspect-[4/3] overflow-hidden bg-concrete md:order-2"
           >
             {settings?.about_image && (
-              <img src={settings.about_image} alt="" className="h-full w-full object-cover" />
+              <motion.img
+                src={settings.about_image}
+                alt=""
+                initial={{ scale: 1.1 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="h-full w-full object-cover"
+              />
             )}
           </motion.div>
         </div>
@@ -111,8 +157,14 @@ export default function Home() {
 
       {/* Featured buildings grid */}
       <section className="px-6 pb-20 md:px-12 md:pb-28">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-10 flex items-end justify-between">
+        <div className="mx-auto max-w-8xl">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mb-10 flex items-end justify-between"
+          >
             <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
               {settings?.featured_section_heading || "Featured work"}
             </h3>
@@ -122,7 +174,7 @@ export default function Home() {
             >
               View all →
             </Link>
-          </div>
+          </motion.div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((b) => (
               <BuildingCard key={b.id} building={b} />
@@ -134,26 +186,48 @@ export default function Home() {
       {/* Stats */}
       {settings?.stats?.length > 0 && (
         <section className="border-y border-ink/10 px-6 py-14 md:px-12 md:py-16">
-          <div className="mx-auto grid max-w-4xl grid-cols-2 gap-6 text-center sm:grid-cols-4 sm:gap-8">
-            {settings.stats.map((stat, i) => (
-              <div key={i}>
-                <p className="font-display text-2xl font-semibold text-ink sm:text-3xl md:text-4xl">
-                  {stat.value}
-                </p>
-                <p className="mt-1 font-mono text-[11px] uppercase tracking-widest text-ink/50 sm:text-xs">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={stagger}
+            className="mx-auto max-w-4xl"
+          >
+            <p className="mb-6 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-steel">
+              Project record
+            </p>
+            <div className="grid grid-cols-2 divide-y divide-ink/10 border border-ink/10 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+              {settings.stats.map((stat, i) => (
+                <motion.div
+                  key={i}
+                  variants={fadeUp}
+                  transition={{ duration: 0.5 }}
+                  className="px-4 py-6 text-center"
+                >
+                  <p className="font-mono text-2xl font-semibold text-ink sm:text-3xl">
+                    {stat.value}
+                  </p>
+                  <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-ink/50">
+                    {stat.label}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </section>
       )}
 
       {/* Gallery preview */}
       {galleryPreview.length > 0 && (
         <section className="px-6 py-20 md:px-12 md:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="mb-10 flex items-end justify-between">
+          <div className="mx-auto max-w-8xl">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-10 flex items-end justify-between"
+            >
               <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
                 {settings?.gallery_section_heading || "Gallery"}
               </h3>
@@ -163,14 +237,33 @@ export default function Home() {
               >
                 View all →
               </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-              {galleryPreview.map((img) => (
-                <div key={img.id} className="aspect-square overflow-hidden bg-concrete">
-                  <img src={img.url} alt={img.caption ?? ""} className="h-full w-full object-cover" />
-                </div>
+            </motion.div>
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={stagger}
+              className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6"
+            >
+              {galleryPreview.map((img, i) => (
+                <motion.div
+                  key={img.id}
+                  variants={fadeUp}
+                  transition={{ duration: 0.4 }}
+                  className="group relative aspect-square overflow-hidden bg-concrete"
+                >
+                  <img
+                    src={img.url}
+                    alt={img.caption ?? ""}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <span className="absolute bottom-2 left-2 font-mono text-[10px] tracking-widest text-paper opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    PL.{String(i + 1).padStart(2, "0")}
+                  </span>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
@@ -178,8 +271,14 @@ export default function Home() {
       {/* Products preview */}
       {productsPreview.length > 0 && (
         <section className="bg-concrete/40 px-6 py-20 md:px-12 md:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="mb-10 flex items-end justify-between">
+          <div className="mx-auto max-w-8xl">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-10 flex items-end justify-between"
+            >
               <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
                 {settings?.products_section_heading || "Products"}
               </h3>
@@ -189,23 +288,37 @@ export default function Home() {
               >
                 View all →
               </Link>
-            </div>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            </motion.div>
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={stagger}
+              className="grid grid-cols-1 gap-6 sm:grid-cols-3"
+            >
               {productsPreview.map((p) => (
-                <Link key={p.id} to={`/products/${p.slug}`} className="group block">
-                  <div className="aspect-square overflow-hidden bg-paper">
-                    {p.image && (
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    )}
-                  </div>
-                  <h4 className="mt-3 font-display text-lg font-semibold text-ink">{p.name}</h4>
-                </Link>
+                <motion.div
+                  key={p.id}
+                  variants={fadeUp}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Link to={`/products/${p.slug}`} className="group block">
+                    <div className="aspect-square overflow-hidden bg-paper">
+                      {p.image && (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                    <h4 className="mt-3 font-display text-lg font-semibold text-ink">
+                      {p.name}
+                    </h4>
+                  </Link>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
@@ -213,54 +326,80 @@ export default function Home() {
       {/* Clients */}
       {settings?.clients?.length > 0 && (
         <section className="border-t border-ink/10 px-6 py-16 md:px-12">
-          <p className="mx-auto max-w-6xl text-center font-mono text-xs uppercase tracking-widest text-ink/40">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="mx-auto max-w-8xl text-center font-mono text-xs uppercase tracking-widest text-ink/40"
+          >
             Trusted by
-          </p>
-          <div className="mx-auto mt-8 flex max-w-6xl flex-wrap items-center justify-center gap-x-12 gap-y-6">
+          </motion.p>
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-40px" }}
+            variants={stagger}
+            className="mx-auto mt-8 flex max-w-8xl flex-wrap items-center justify-center gap-x-12 gap-y-6"
+          >
             {settings.clients.map((client, i) => (
-              <img
+              <motion.img
                 key={i}
+                variants={fadeUp}
+                transition={{ duration: 0.4 }}
                 src={client.logo_url}
                 alt={client.name}
                 title={client.name}
                 className="h-8 w-auto grayscale opacity-60 transition-opacity hover:opacity-100 sm:h-10"
               />
             ))}
-          </div>
+          </motion.div>
         </section>
       )}
 
       {/* Brochure download */}
       {settings?.brochure_url && (
-        <section className="px-6 py-16 text-center md:px-12">
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="px-6 py-16 text-center md:px-12"
+        >
           <a
             href={settings.brochure_url}
             target="_blank"
             rel="noreferrer"
             download
-            className="inline-flex items-center gap-3 border border-ink px-8 py-3 font-mono text-xs uppercase tracking-widest text-ink hover:bg-ink hover:text-paper"
+            className="inline-flex items-center gap-3 border border-ink px-8 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-ink hover:text-paper"
           >
             ↓ {settings.brochure_label || "Download brochure"}
           </a>
-        </section>
+        </motion.section>
       )}
 
       {/* CTA */}
       <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
         className="bg-ink px-6 py-20 text-center md:px-12 md:py-28"
       >
         <h3 className="font-display text-2xl font-semibold text-paper sm:text-3xl md:text-4xl">
           {settings?.cta_heading || "Have a site in mind?"}
         </h3>
-        <Link
-          to="/contact"
-          className="mt-8 inline-block bg-amber px-8 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-paper"
+        <motion.div
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.98 }}
+          className="mt-8 inline-block"
         >
-          {settings?.cta_button_text || "Start a conversation"}
-        </Link>
+          <Link
+            to="/contact"
+            className="inline-block bg-amber px-8 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-paper"
+          >
+            {settings?.cta_button_text || "Start a conversation"}
+          </Link>
+        </motion.div>
       </motion.section>
     </div>
   );

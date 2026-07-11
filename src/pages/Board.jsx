@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Board() {
@@ -6,15 +7,19 @@ export default function Board() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from("board_members").select("*").order("sort_order").then(({ data }) => {
-      setMembers(data ?? []);
-      setLoading(false);
-    });
+    supabase
+      .from("board_members")
+      .select("*")
+      .order("sort_order")
+      .then(({ data }) => {
+        setMembers(data ?? []);
+        setLoading(false);
+      });
   }, []);
 
   return (
     <div className="px-6 pb-28 pt-36 md:px-12">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-4xl">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
           Leadership
         </p>
@@ -22,26 +27,47 @@ export default function Board() {
           Board of Directors
         </h1>
 
-        <div className="mt-16 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
-          {loading && <p className="font-mono text-sm text-ink/50">Loading…</p>}
-          {!loading && members.length === 0 && (
-            <p className="font-mono text-sm text-ink/50">Board information coming soon.</p>
+        <div className="mt-16 divide-y divide-ink/10 border-t border-ink/10">
+          {loading && (
+            <p className="py-8 font-mono text-sm text-ink/50">Loading…</p>
           )}
-          {members.map((m) => (
-            <div key={m.id}>
-              {m.photo_url && (
-                <img
-                  src={m.photo_url}
-                  alt={m.name}
-                  className="aspect-[4/5] w-full object-cover grayscale"
-                />
-              )}
-              <h3 className="mt-4 font-display text-lg font-semibold text-ink">{m.name}</h3>
-              <p className="font-mono text-xs uppercase tracking-widest text-steel">{m.role}</p>
-              {m.bio && (
-                <p className="mt-2 font-body text-sm leading-relaxed text-ink/70">{m.bio}</p>
-              )}
-            </div>
+          {!loading && members.length === 0 && (
+            <p className="py-8 font-mono text-sm text-ink/50">
+              Board information coming soon.
+            </p>
+          )}
+          {members.map((m, i) => (
+            <motion.div
+              key={m.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: (i % 4) * 0.06 }}
+              className="grid grid-cols-1 gap-6 py-10 sm:grid-cols-[300px_1fr] sm:items-start"
+            >
+              <div className="aspect-square w-full max-w-[300px] overflow-hidden bg-concrete sm:max-w-none">
+                {m.photo_url && (
+                  <img
+                    src={m.photo_url}
+                    alt={m.name}
+                    className="h-full w-full object-cover grayscale"
+                  />
+                )}
+              </div>
+              <div>
+                <h3 className="font-display text-2xl font-semibold text-ink">
+                  {m.name}
+                </h3>
+                <p className="mt-1 font-mono text-xs uppercase tracking-widest text-steel">
+                  {m.role}
+                </p>
+                {m.bio && (
+                  <p className="mt-3 max-w-2xl font-body leading-relaxed text-ink/70">
+                    {m.bio}
+                  </p>
+                )}
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>

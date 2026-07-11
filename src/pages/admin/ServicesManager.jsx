@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 
-const empty = { title: "", description: "", icon: "" };
+const empty = { title: "", description: "", icon: "", image_url: "" };
 
 export default function ServicesManager() {
   const [services, setServices] = useState([]);
@@ -29,7 +29,7 @@ export default function ServicesManager() {
 
   function startEdit(s) {
     setEditingId(s.id);
-    setEditForm({ title: s.title, description: s.description ?? "", icon: s.icon ?? "" });
+    setEditForm({ title: s.title, description: s.description ?? "", icon: s.icon ?? "", image_url: s.image_url ?? "" });
   }
 
   async function saveEdit(id) {
@@ -54,6 +54,7 @@ export default function ServicesManager() {
           <input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Service title" className="input" />
         </div>
         <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Description" rows={2} className="input" />
+        <input value={form.image_url} onChange={(e) => setForm((f) => ({ ...f, image_url: e.target.value }))} placeholder="Image URL (optional)" className="input" />
         <button type="submit" className="bg-ink px-6 py-2.5 font-mono text-xs uppercase tracking-widest text-paper hover:bg-steel">
           + Add service
         </button>
@@ -70,6 +71,7 @@ export default function ServicesManager() {
                   <input value={editForm.title} onChange={(e) => setEditForm((f) => ({ ...f, title: e.target.value }))} className="input" />
                 </div>
                 <textarea value={editForm.description} onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))} rows={2} className="input" />
+                <input value={editForm.image_url} onChange={(e) => setEditForm((f) => ({ ...f, image_url: e.target.value }))} placeholder="Image URL" className="input" />
                 <div className="flex gap-4 font-mono text-xs uppercase tracking-widest">
                   <button onClick={() => saveEdit(s.id)} className="text-steel hover:text-ink">Save</button>
                   <button onClick={() => setEditingId(null)} className="text-ink/50 hover:text-ink">Cancel</button>
@@ -77,9 +79,12 @@ export default function ServicesManager() {
               </div>
             ) : (
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-body font-medium text-ink">{s.icon} {s.title}</p>
-                  <p className="font-mono text-xs text-ink/50">{s.description}</p>
+                <div className="flex items-center gap-4">
+                  {s.image_url && <img src={s.image_url} alt="" className="h-12 w-12 object-cover" />}
+                  <div>
+                    <p className="font-body font-medium text-ink">{s.icon} {s.title}</p>
+                    <p className="font-mono text-xs text-ink/50">{s.description}</p>
+                  </div>
                 </div>
                 <div className="flex gap-4 font-mono text-xs uppercase tracking-widest">
                   <button onClick={() => startEdit(s)} className="text-steel hover:text-ink">Edit</button>

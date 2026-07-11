@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export default function BuildingCard({ building }) {
+export default function BuildingCard({ building, index }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -14,8 +14,21 @@ export default function BuildingCard({ building }) {
           <img
             src={building.hero_image}
             alt={building.name}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
           />
+
+          {/* Blueprint registration marks — corner brackets, echo the hero's drafting motif */}
+          <Corner className="left-3 top-3 border-l border-t" />
+          <Corner className="right-3 top-3 border-r border-t" />
+          <Corner className="bottom-3 left-3 border-b border-l" />
+          <Corner className="bottom-3 right-3 border-b border-r" />
+
+          {typeof index === "number" && (
+            <span className="absolute right-3 top-3 font-mono text-[10px] tracking-widest text-amber opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              N°{String(index + 1).padStart(2, "0")}
+            </span>
+          )}
+
           <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/0 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-5">
             <p className="font-mono text-[11px] uppercase tracking-widest text-amber">
@@ -32,5 +45,13 @@ export default function BuildingCard({ building }) {
         </div>
       </Link>
     </motion.div>
+  );
+}
+
+function Corner({ className }) {
+  return (
+    <span
+      className={`pointer-events-none absolute h-4 w-4 border-amber/0 opacity-0 transition-all duration-300 group-hover:border-amber/80 group-hover:opacity-100 ${className}`}
+    />
   );
 }

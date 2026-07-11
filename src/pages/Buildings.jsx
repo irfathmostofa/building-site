@@ -20,7 +20,7 @@ export default function Buildings() {
 
   return (
     <div className="px-6 pb-28 pt-36 md:px-12">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-8xl">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
           Portfolio
         </p>
@@ -46,7 +46,9 @@ export default function Buildings() {
 
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {loading && (
-            <p className="col-span-full font-mono text-sm text-ink/50">Loading…</p>
+            <p className="col-span-full font-mono text-sm text-ink/50">
+              Loading…
+            </p>
           )}
           {!loading && buildings.length === 0 && (
             <p className="col-span-full font-mono text-sm text-ink/50">

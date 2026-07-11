@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useBuilding } from "../hooks/useBuildings";
+import Lightbox from "../components/Lightbox";
 
 export default function BuildingDetail() {
   const { slug } = useParams();
   const { building, images, loading, error } = useBuilding(slug);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   if (loading) {
     return (
@@ -20,7 +23,10 @@ export default function BuildingDetail() {
         <p className="font-mono text-sm text-ink/50">
           We couldn't find that building.
         </p>
-        <Link to="/buildings" className="font-mono text-xs uppercase tracking-widest text-steel">
+        <Link
+          to="/buildings"
+          className="font-mono text-xs uppercase tracking-widest text-steel"
+        >
           ← Back to all buildings
         </Link>
       </div>
@@ -49,12 +55,16 @@ export default function BuildingDetail() {
 
       {/* Specs strip */}
       <section className="border-b border-ink/10 bg-paper px-6 py-8 md:px-12">
-        <div className="mx-auto flex max-w-6xl flex-wrap gap-x-12 gap-y-4 font-mono text-xs uppercase tracking-widest">
+        <div className="mx-auto flex max-w-8xl flex-wrap gap-x-12 gap-y-4 font-mono text-xs uppercase tracking-widest">
           <Spec label="Location" value={building.location} />
           <Spec label="Year" value={building.year_built} />
           <Spec
             label="Area"
-            value={building.area_sqft ? `${building.area_sqft.toLocaleString()} sqft` : null}
+            value={
+              building.area_sqft
+                ? `${building.area_sqft.toLocaleString()} sqft`
+                : null
+            }
           />
           <Spec label="Status" value={building.status} />
         </div>
@@ -80,22 +90,34 @@ export default function BuildingDetail() {
       {/* Gallery */}
       {images.length > 0 && (
         <section className="px-6 pb-28 md:px-12">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:grid-cols-2">
-            {images.map((img) => (
-              <motion.img
+          <div className="mx-auto grid max-w-8xl grid-cols-1 gap-4 sm:grid-cols-2">
+            {images.map((img, i) => (
+              <motion.button
                 key={img.id}
-                src={img.url}
-                alt={img.caption ?? building.name}
+                onClick={() => setLightboxIndex(i)}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5 }}
-                className="w-full object-cover"
-              />
+                className="group block overflow-hidden text-left"
+              >
+                <img
+                  src={img.url}
+                  alt={img.caption ?? building.name}
+                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </motion.button>
             ))}
           </div>
         </section>
       )}
+
+      <Lightbox
+        images={images}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={setLightboxIndex}
+      />
 
       {/* CTA */}
       <section className="bg-ink px-6 py-20 text-center md:px-12">

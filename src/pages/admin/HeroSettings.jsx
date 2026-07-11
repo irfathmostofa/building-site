@@ -49,6 +49,22 @@ export default function HeroSettings() {
     setSettings((s) => ({ ...s, clients: (s.clients ?? []).filter((_, i) => i !== index) }));
   }
 
+  function updateSocial(index, field, value) {
+    setSettings((s) => {
+      const social_links = [...(s.social_links ?? [])];
+      social_links[index] = { ...social_links[index], [field]: value };
+      return { ...s, social_links };
+    });
+  }
+
+  function addSocial() {
+    setSettings((s) => ({ ...s, social_links: [...(s.social_links ?? []), { platform: "facebook", url: "" }] }));
+  }
+
+  function removeSocial(index) {
+    setSettings((s) => ({ ...s, social_links: (s.social_links ?? []).filter((_, i) => i !== index) }));
+  }
+
   async function handleSave(e) {
     e.preventDefault();
     setStatus("saving");
@@ -174,6 +190,36 @@ export default function HeroSettings() {
           </div>
           <button type="button" onClick={addClient} className="mt-3 font-mono text-xs uppercase tracking-widest text-steel hover:text-ink">
             + Add client
+          </button>
+        </fieldset>
+
+        {/* Social & WhatsApp */}
+        <fieldset>
+          <legend className="font-mono text-xs uppercase tracking-widest text-amber">Social links & WhatsApp</legend>
+          <div className="mt-4">
+            <Field label="WhatsApp number (digits only, with country code, e.g. 8801XXXXXXXXX)">
+              <input value={settings.whatsapp_number ?? ""} onChange={(e) => updateField("whatsapp_number", e.target.value)} className="input" />
+            </Field>
+          </div>
+          <div className="mt-4 space-y-3">
+            {(settings.social_links ?? []).map((link, i) => (
+              <div key={i} className="flex gap-3">
+                <select value={link.platform ?? "facebook"} onChange={(e) => updateSocial(i, "platform", e.target.value)} className="input w-40">
+                  <option value="facebook">Facebook</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="linkedin">LinkedIn</option>
+                  <option value="twitter">Twitter / X</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="other">Other</option>
+                </select>
+                <input value={link.url ?? ""} onChange={(e) => updateSocial(i, "url", e.target.value)} placeholder="Profile URL" className="input" />
+                <button type="button" onClick={() => removeSocial(i)} className="px-3 font-mono text-xs text-red-500 hover:text-red-700">Remove</button>
+              </div>
+            ))}
+          </div>
+          <button type="button" onClick={addSocial} className="mt-3 font-mono text-xs uppercase tracking-widest text-steel hover:text-ink">
+            + Add social link
           </button>
         </fieldset>
 

@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import Home from "./pages/Home";
 import Buildings from "./pages/Buildings";
 import BuildingDetail from "./pages/BuildingDetail";
@@ -33,6 +34,7 @@ import BoardManager from "./pages/admin/BoardManager";
 import BlogManager from "./pages/admin/BlogManager";
 import BlogForm from "./pages/admin/BlogForm";
 import Inquiries from "./pages/admin/Inquiries";
+import BackToTop from "./components/BackToTop";
 
 function SiteLayout({ children }) {
   return (
@@ -40,6 +42,8 @@ function SiteLayout({ children }) {
       <Navbar />
       <main>{children}</main>
       <Footer />
+      <FloatingWhatsApp />
+      <BackToTop />
     </div>
   );
 }
@@ -49,18 +53,102 @@ export default function App() {
     <AuthProvider>
       <Routes>
         {/* Public site */}
-        <Route path="/" element={<SiteLayout><Home /></SiteLayout>} />
-        <Route path="/buildings" element={<SiteLayout><Buildings /></SiteLayout>} />
-        <Route path="/buildings/:slug" element={<SiteLayout><BuildingDetail /></SiteLayout>} />
-        <Route path="/products" element={<SiteLayout><Products /></SiteLayout>} />
-        <Route path="/products/:slug" element={<SiteLayout><ProductDetail /></SiteLayout>} />
-        <Route path="/gallery" element={<SiteLayout><Gallery /></SiteLayout>} />
-        <Route path="/what-we-do" element={<SiteLayout><WhatWeDo /></SiteLayout>} />
-        <Route path="/board" element={<SiteLayout><Board /></SiteLayout>} />
-        <Route path="/blog" element={<SiteLayout><Blog /></SiteLayout>} />
-        <Route path="/blog/:slug" element={<SiteLayout><BlogPost /></SiteLayout>} />
-        <Route path="/about" element={<SiteLayout><About /></SiteLayout>} />
-        <Route path="/contact" element={<SiteLayout><Contact /></SiteLayout>} />
+        <Route
+          path="/"
+          element={
+            <SiteLayout>
+              <Home />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/buildings"
+          element={
+            <SiteLayout>
+              <Buildings />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/buildings/:slug"
+          element={
+            <SiteLayout>
+              <BuildingDetail />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <SiteLayout>
+              <Products />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/products/:slug"
+          element={
+            <SiteLayout>
+              <ProductDetail />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/gallery"
+          element={
+            <SiteLayout>
+              <Gallery />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/what-we-do"
+          element={
+            <SiteLayout>
+              <WhatWeDo />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/board"
+          element={
+            <SiteLayout>
+              <Board />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/blog"
+          element={
+            <SiteLayout>
+              <Blog />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/blog/:slug"
+          element={
+            <SiteLayout>
+              <BlogPost />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <SiteLayout>
+              <About />
+            </SiteLayout>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <SiteLayout>
+              <Contact />
+            </SiteLayout>
+          }
+        />
 
         {/* Admin */}
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -79,7 +167,10 @@ export default function App() {
           <Route path="building-types" element={<BuildingTypesManager />} />
           <Route path="products" element={<ProductsManager />} />
           <Route path="products/:id" element={<ProductForm />} />
-          <Route path="product-categories" element={<ProductCategoriesManager />} />
+          <Route
+            path="product-categories"
+            element={<ProductCategoriesManager />}
+          />
           <Route path="gallery" element={<GalleryManager />} />
           <Route path="services" element={<ServicesManager />} />
           <Route path="board" element={<BoardManager />} />
