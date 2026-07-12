@@ -55,7 +55,7 @@ export default function BuildingDetail() {
 
       {/* Specs strip */}
       <section className="border-b border-ink/10 bg-paper px-6 py-8 md:px-12">
-        <div className="mx-auto flex max-w-8xl flex-wrap gap-x-12 gap-y-4 font-mono text-xs uppercase tracking-widest">
+        <div className="mx-auto flex max-w-[90rem] flex-wrap gap-x-12 gap-y-4 font-mono text-xs uppercase tracking-widest">
           <Spec label="Location" value={building.location} />
           <Spec label="Year" value={building.year_built} />
           <Spec
@@ -90,7 +90,7 @@ export default function BuildingDetail() {
       {/* Gallery */}
       {images.length > 0 && (
         <section className="px-6 pb-28 md:px-12">
-          <div className="mx-auto grid max-w-8xl grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mx-auto grid max-w-[90rem] grid-cols-1 gap-4 sm:grid-cols-2">
             {images.map((img, i) => (
               <motion.button
                 key={img.id}

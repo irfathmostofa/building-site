@@ -44,7 +44,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-ink px-6 py-16 text-concrete md:px-12">
-      <div className="mx-auto grid max-w-8xl gap-10 sm:grid-cols-2 md:grid-cols-4">
+      <div className="mx-auto grid max-w-[90rem] gap-10 sm:grid-cols-2 md:grid-cols-4">
         <div className="sm:col-span-2 md:col-span-2">
           {brand.logo_url ? (
             <img
@@ -125,7 +125,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <p className="mx-auto mt-16 max-w-8xl font-mono text-[11px] text-concrete/40">
+      <p className="mx-auto mt-16 max-w-[90rem] font-mono text-[11px] text-concrete/40">
         © {new Date().getFullYear()} {brand.site_name}. All rights reserved.
       </p>
     </footer>

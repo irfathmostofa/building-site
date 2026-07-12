@@ -1,16 +1,17 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export default function BuildingCard({ building, index }) {
+export default function BuildingCard({ building, index, className = "aspect-[4/5]" }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5 }}
+      className="h-full"
     >
-      <Link to={`/buildings/${building.slug}`} className="group block">
-        <div className="relative aspect-[4/5] overflow-hidden bg-ink">
+      <Link to={`/buildings/${building.slug}`} className="group block h-full">
+        <div className={`relative h-full w-full overflow-hidden bg-ink ${className}`}>
           <img
             src={building.hero_image}
             alt={building.name}

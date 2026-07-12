@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import BlueprintReveal from "../components/BlueprintReveal";
+import { motion, useInView, animate } from "framer-motion";
+import HeroSlider from "../components/HeroSlider";
 import BuildingCard from "../components/BuildingCard";
 import { useBuildings } from "../hooks/useBuildings";
 import { supabase } from "../lib/supabaseClient";
@@ -16,10 +16,40 @@ const stagger = {
   show: { transition: { staggerChildren: 0.08 } },
 };
 
+function parseStat(value) {
+  const match = String(value ?? "").match(/^([^0-9]*)([0-9]+)(.*)$/);
+  if (!match) return { prefix: "", number: null, suffix: value ?? "" };
+  return { prefix: match[1], number: parseInt(match[2], 10), suffix: match[3] };
+}
+
+function StatNumber({ value }) {
+  const { prefix, number, suffix } = parseStat(value);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!inView || number == null) return;
+    const controls = animate(0, number, {
+      duration: 1.5,
+      ease: "easeOut",
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    });
+    return controls.stop;
+  }, [inView, number]);
+
+  return (
+    <span ref={ref}>
+      {prefix}
+      {number == null ? suffix : display}
+      {number != null ? suffix : ""}
+    </span>
+  );
+}
+
 export default function Home() {
   const { buildings: featured, loading } = useBuildings({ featuredOnly: true });
   const [settings, setSettings] = useState(null);
-  const [heroBuilding, setHeroBuilding] = useState(null);
   const [galleryPreview, setGalleryPreview] = useState([]);
   const [productsPreview, setProductsPreview] = useState([]);
 
@@ -34,7 +64,7 @@ export default function Home() {
       .from("gallery_images")
       .select("*")
       .order("sort_order")
-      .limit(6)
+      .limit(10)
       .then(({ data }) => setGalleryPreview(data ?? []));
     supabase
       .from("products")
@@ -44,45 +74,14 @@ export default function Home() {
       .then(({ data }) => setProductsPreview(data ?? []));
   }, []);
 
-  useEffect(() => {
-    async function resolveHero() {
-      if (settings?.hero_building_id) {
-        const { data } = await supabase
-          .from("buildings")
-          .select("*")
-          .eq("id", settings.hero_building_id)
-          .single();
-        if (data) {
-          setHeroBuilding(data);
-          return;
-        }
-      }
-      setHeroBuilding(featured[0] ?? null);
-    }
-    if (settings !== null) resolveHero();
-  }, [settings, featured]);
+  const bento = featured.slice(0, 4);
 
   return (
     <div>
-      {heroBuilding ? (
-        <BlueprintReveal
-          heroImage={heroBuilding.hero_image}
-          blueprintImage={heroBuilding.blueprint_image}
-          name={settings?.hero_headline || heroBuilding.name}
-          eyebrow={settings?.hero_eyebrow}
-          location={heroBuilding.location}
-          yearBuilt={heroBuilding.year_built}
-          areaSqft={heroBuilding.area_sqft}
-        />
-      ) : (
-        <div className="flex h-screen items-center justify-center bg-ink px-6 text-center">
-          <p className="font-mono text-sm text-concrete">
-            {loading
-              ? "Loading…"
-              : "Mark a building as featured (or set a hero building in /admin/hero) to power the hero."}
-          </p>
-        </div>
-      )}
+      <HeroSlider
+        buildings={loading ? [] : featured}
+        eyebrow={settings?.hero_eyebrow || "Est. from the ground up"}
+      />
 
       {/* Intro statement */}
       <motion.section
@@ -109,45 +108,46 @@ export default function Home() {
         </motion.h2>
       </motion.section>
 
-      {/* About us, with image */}
-      <section className="px-6 pb-20 md:px-12 md:pb-28">
-        <div className="mx-auto grid max-w-8xl grid-cols-1 gap-10 md:grid-cols-2 md:items-center md:gap-16">
+      {/* About us — diagonal-clipped image, editorial split */}
+      <section className="px-6 pb-24 md:px-12 md:pb-32">
+        <div className="mx-auto grid max-w-[90rem] grid-cols-1 gap-12 md:grid-cols-[1fr_1.1fr] md:items-center md:gap-4">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="order-2 md:order-1"
+            className="order-2 md:order-1 md:pr-10"
           >
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
               {settings?.about_heading || "About us"}
             </p>
-            <p className="mt-5 font-body text-lg leading-relaxed text-ink/80">
+            <p className="mt-5 font-body text-lg leading-relaxed text-ink/80 md:text-xl">
               {settings?.about_body ||
                 "Meridian Builders has spent two decades turning blueprints into places people live, work, and gather."}
             </p>
             <Link
               to="/about"
-              className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-steel hover:text-ink"
+              className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-steel hover:text-ink"
             >
-              More about us →
+              More about us <span aria-hidden>→</span>
             </Link>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="order-1 aspect-[4/3] overflow-hidden bg-concrete md:order-2"
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="order-1 aspect-[5/4] overflow-hidden bg-concrete md:order-2"
+            style={{ clipPath: "polygon(6% 0, 100% 0, 100% 100%, 0 100%)" }}
           >
             {settings?.about_image && (
               <motion.img
                 src={settings.about_image}
                 alt=""
-                initial={{ scale: 1.1 }}
+                initial={{ scale: 1.15 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
+                transition={{ duration: 1.4, ease: "easeOut" }}
                 className="h-full w-full object-cover"
               />
             )}
@@ -155,9 +155,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured buildings grid */}
-      <section className="px-6 pb-20 md:px-12 md:pb-28">
-        <div className="mx-auto max-w-8xl">
+      {/* Featured buildings — bento grid */}
+      <section className="px-6 pb-24 md:px-12 md:pb-32">
+        <div className="mx-auto max-w-[90rem]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -175,15 +175,33 @@ export default function Home() {
               View all →
             </Link>
           </motion.div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((b) => (
-              <BuildingCard key={b.id} building={b} />
-            ))}
-          </div>
+
+          {bento.length > 0 && (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[220px]">
+              {bento.map((b, i) => (
+                <div
+                  key={b.id}
+                  className={
+                    i === 0
+                      ? "sm:col-span-2 lg:col-span-2 lg:row-span-2"
+                      : i === 1
+                        ? "lg:col-span-2"
+                        : ""
+                  }
+                >
+                  <BuildingCard
+                    building={b}
+                    index={i}
+                    className="h-full min-h-[280px] lg:min-h-0"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Stats */}
+      {/* Stats — animated count-up */}
       {settings?.stats?.length > 0 && (
         <section className="border-y border-ink/10 px-6 py-14 md:px-12 md:py-16">
           <motion.div
@@ -205,7 +223,7 @@ export default function Home() {
                   className="px-4 py-6 text-center"
                 >
                   <p className="font-mono text-2xl font-semibold text-ink sm:text-3xl">
-                    {stat.value}
+                    <StatNumber value={stat.value} />
                   </p>
                   <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-ink/50">
                     {stat.label}
@@ -217,53 +235,35 @@ export default function Home() {
         </section>
       )}
 
-      {/* Gallery preview */}
+      {/* Gallery preview — infinite marquee strip */}
       {galleryPreview.length > 0 && (
-        <section className="px-6 py-20 md:px-12 md:py-28">
-          <div className="mx-auto max-w-8xl">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="mb-10 flex items-end justify-between"
+        <section className="overflow-hidden py-20 md:py-28">
+          <div className="mx-auto mb-10 flex max-w-[90rem] items-end justify-between px-6 md:px-12">
+            <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
+              {settings?.gallery_section_heading || "Gallery"}
+            </h3>
+            <Link
+              to="/gallery"
+              className="font-mono text-xs uppercase tracking-widest text-steel hover:text-ink"
             >
-              <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
-                {settings?.gallery_section_heading || "Gallery"}
-              </h3>
-              <Link
-                to="/gallery"
-                className="font-mono text-xs uppercase tracking-widest text-steel hover:text-ink"
-              >
-                View all →
-              </Link>
-            </motion.div>
-            <motion.div
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-60px" }}
-              variants={stagger}
-              className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6"
-            >
-              {galleryPreview.map((img, i) => (
-                <motion.div
-                  key={img.id}
-                  variants={fadeUp}
-                  transition={{ duration: 0.4 }}
-                  className="group relative aspect-square overflow-hidden bg-concrete"
+              View all →
+            </Link>
+          </div>
+          <div className="group flex w-max gap-4 [&:hover>*]:[animation-play-state:paused]">
+            <div className="flex animate-marquee gap-4">
+              {[...galleryPreview, ...galleryPreview].map((img, i) => (
+                <div
+                  key={i}
+                  className="h-56 w-72 flex-shrink-0 overflow-hidden bg-concrete sm:h-64 sm:w-80"
                 >
                   <img
                     src={img.url}
                     alt={img.caption ?? ""}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="h-full w-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                  <span className="absolute bottom-2 left-2 font-mono text-[10px] tracking-widest text-paper opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    PL.{String(i + 1).padStart(2, "0")}
-                  </span>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
       )}
@@ -271,7 +271,7 @@ export default function Home() {
       {/* Products preview */}
       {productsPreview.length > 0 && (
         <section className="bg-concrete/40 px-6 py-20 md:px-12 md:py-28">
-          <div className="mx-auto max-w-8xl">
+          <div className="mx-auto max-w-[90rem]">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -330,7 +330,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="mx-auto max-w-8xl text-center font-mono text-xs uppercase tracking-widest text-ink/40"
+            className="mx-auto max-w-[90rem] text-center font-mono text-xs uppercase tracking-widest text-ink/40"
           >
             Trusted by
           </motion.p>
@@ -339,7 +339,7 @@ export default function Home() {
             whileInView="show"
             viewport={{ once: true, margin: "-40px" }}
             variants={stagger}
-            className="mx-auto mt-8 flex max-w-8xl flex-wrap items-center justify-center gap-x-12 gap-y-6"
+            className="mx-auto mt-8 flex max-w-[90rem] flex-wrap items-center justify-center gap-x-12 gap-y-6"
           >
             {settings.clients.map((client, i) => (
               <motion.img
@@ -383,23 +383,44 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="bg-ink px-6 py-20 text-center md:px-12 md:py-28"
+        className="relative overflow-hidden bg-ink px-6 py-20 text-center md:px-12 md:py-28"
       >
-        <h3 className="font-display text-2xl font-semibold text-paper sm:text-3xl md:text-4xl">
-          {settings?.cta_heading || "Have a site in mind?"}
-        </h3>
-        <motion.div
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.98 }}
-          className="mt-8 inline-block"
-        >
-          <Link
-            to="/contact"
-            className="inline-block bg-amber px-8 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-paper"
+        <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+          <svg className="h-full w-full" preserveAspectRatio="none">
+            <defs>
+              <pattern
+                id="cta-grid"
+                width="56"
+                height="56"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 56 0 L 0 0 0 56"
+                  className="blueprint-line"
+                  strokeOpacity="0.6"
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#cta-grid)" />
+          </svg>
+        </div>
+        <div className="relative">
+          <h3 className="font-display text-2xl font-semibold text-paper sm:text-3xl md:text-4xl">
+            {settings?.cta_heading || "Have a site in mind?"}
+          </h3>
+          <motion.div
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.98 }}
+            className="mt-8 inline-block"
           >
-            {settings?.cta_button_text || "Start a conversation"}
-          </Link>
-        </motion.div>
+            <Link
+              to="/contact"
+              className="inline-block bg-amber px-8 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-paper"
+            >
+              {settings?.cta_button_text || "Start a conversation"}
+            </Link>
+          </motion.div>
+        </div>
       </motion.section>
     </div>
   );

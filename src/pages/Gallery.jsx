@@ -29,7 +29,7 @@ export default function Gallery() {
 
   return (
     <div className="px-6 pb-28 pt-36 md:px-12">
-      <div className="mx-auto max-w-8xl">
+      <div className="mx-auto max-w-[90rem]">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
           Gallery
         </p>
