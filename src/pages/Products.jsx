@@ -18,16 +18,50 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    let query = supabase
-      .from("products")
-      .select("*, product_categories(name, slug)")
-      .order("sort_order");
-    if (categorySlug) query = query.eq("product_categories.slug", categorySlug);
-    query.then(({ data }) => {
-      setProducts(data ?? []);
-      setLoading(false);
-    });
+    let cancelled = false;
+
+    async function fetchProducts() {
+      setLoading(true);
+
+      // First, get the category_id if categorySlug is provided
+      let categoryId = null;
+      if (categorySlug) {
+        const { data: categoryData, error: categoryError } = await supabase
+          .from("product_categories")
+          .select("id")
+          .eq("slug", categorySlug)
+          .single();
+
+        if (categoryError) {
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
+        categoryId = categoryData?.id;
+      }
+
+      // Build the main query
+      let query = supabase
+        .from("products")
+        .select("*, product_categories(name, slug)")
+        .order("sort_order");
+
+      // Filter by category_id (foreign key column in your schema)
+      if (categoryId) {
+        query = query.eq("category_id", categoryId);
+      }
+
+      const { data } = await query;
+      if (!cancelled) {
+        setProducts(data ?? []);
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+    return () => {
+      cancelled = true;
+    };
   }, [categorySlug]);
 
   return (

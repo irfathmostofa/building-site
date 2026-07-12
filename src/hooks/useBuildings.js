@@ -11,13 +11,40 @@ export function useBuildings({ featuredOnly = false, typeSlug = null } = {}) {
 
     async function fetchBuildings() {
       setLoading(true);
+
+      // First, get the type_id if typeSlug is provided
+      let typeId = null;
+      if (typeSlug) {
+        const { data: typeData, error: typeError } = await supabase
+          .from("building_types")
+          .select("id")
+          .eq("slug", typeSlug)
+          .single();
+
+        if (typeError) {
+          if (!cancelled) {
+            setError(typeError);
+            setLoading(false);
+          }
+          return;
+        }
+        typeId = typeData?.id;
+      }
+
+      // Build the main query
       let query = supabase
         .from("buildings")
         .select("*, building_types(name, slug)")
         .order("sort_order", { ascending: true });
 
-      if (featuredOnly) query = query.eq("featured", true);
-      if (typeSlug) query = query.eq("building_types.slug", typeSlug);
+      if (featuredOnly) {
+        query = query.eq("featured", true);
+      }
+
+      // Filter by type_id (foreign key column in your schema)
+      if (typeId) {
+        query = query.eq("type_id", typeId);
+      }
 
       const { data, error } = await query;
       if (!cancelled) {
