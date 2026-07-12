@@ -30,7 +30,7 @@ export default function BackToTop() {
           transition={{ duration: 0.25 }}
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.95 }}
-          className="group fixed bottom-24 right-6 z-40 flex h-14 w-14 flex-col items-center justify-center gap-1 border border-ink/15 bg-paper/95 text-ink shadow-lg shadow-ink/10 backdrop-blur-sm transition-colors hover:border-amber"
+          className="group fixed bottom-6 rounded-full right-6 z-40 flex h-14 w-14 flex-col items-center justify-center gap-1 border border-ink/15 bg-paper/95 text-ink shadow-lg shadow-ink/10 backdrop-blur-sm transition-colors hover:border-amber"
         >
           <ArrowUp
             size={16}
