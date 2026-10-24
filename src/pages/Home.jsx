@@ -52,6 +52,7 @@ export default function Home() {
   const [settings, setSettings] = useState(null);
   const [galleryPreview, setGalleryPreview] = useState([]);
   const [productsPreview, setProductsPreview] = useState([]);
+  const [servicesPreview, setServicesPreview] = useState([]);
 
   useEffect(() => {
     supabase
@@ -72,6 +73,12 @@ export default function Home() {
       .eq("featured", true)
       .limit(3)
       .then(({ data }) => setProductsPreview(data ?? []));
+    supabase
+      .from("services")
+      .select("*")
+      .order("sort_order")
+      .limit(6)
+      .then(({ data }) => setServicesPreview(data ?? []));
   }, []);
 
   const bento = featured.slice(0, 4);
@@ -152,6 +159,66 @@ export default function Home() {
               />
             )}
           </motion.div>
+        </div>
+      </section>
+
+      {/* What we do */}
+      <section className="bg-concrete/40 px-6 py-20 md:px-12 md:py-28">
+        <div className="mx-auto max-w-[90rem]">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mb-10 flex items-end justify-between"
+          >
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
+                Services
+              </p>
+              <h3 className="mt-3 font-display text-xl font-semibold text-ink sm:text-2xl">
+                What we do
+              </h3>
+            </div>
+            <Link
+              to="/what-we-do"
+              className="font-mono text-xs uppercase tracking-widest text-steel hover:text-ink"
+            >
+              View all →
+            </Link>
+          </motion.div>
+          {servicesPreview.length > 0 ? (
+            <motion.div
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={stagger}
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {servicesPreview.map((s) => (
+                <motion.div
+                  key={s.id}
+                  variants={fadeUp}
+                  transition={{ duration: 0.5 }}
+                  className="border border-ink/10 bg-paper p-6"
+                >
+                  {s.icon && <p className="text-3xl">{s.icon}</p>}
+                  <h4 className="mt-3 font-display text-lg font-semibold text-ink">
+                    {s.title}
+                  </h4>
+                  {s.description && (
+                    <p className="mt-2 font-body text-sm leading-relaxed text-ink/70">
+                      {s.description}
+                    </p>
+                  )}
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <p className="font-body text-ink/70">
+              Every service a build needs, in-house — from planning through handover.
+            </p>
+          )}
         </div>
       </section>
 

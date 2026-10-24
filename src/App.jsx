@@ -36,6 +36,7 @@ import BlogForm from "./pages/admin/BlogForm";
 import Inquiries from "./pages/admin/Inquiries";
 import BackToTop from "./components/BackToTop";
 import Preloader from "./components/Preloader";
+import ScrollToTop from "./components/ScrollToTop";
 
 function SiteLayout({ children }) {
   return (
@@ -53,6 +54,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Preloader />
+      <ScrollToTop />
       <Routes>
         {/* Public site */}
         <Route
