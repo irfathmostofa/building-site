@@ -86,6 +86,11 @@ export default function Footer() {
           <p className="mb-3 text-steel">Site</p>
           <ul className="space-y-2">
             <li>
+              <Link to="/" className="hover:text-paper">
+                Home
+              </Link>
+            </li>
+            <li>
               <Link to="/buildings" className="hover:text-paper">
                 Buildings
               </Link>

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabaseClient";
 
 const links = [
+  { to: "/", label: "Home", end: true },
   { to: "/buildings", label: "Buildings" },
   { to: "/products", label: "Products" },
   { to: "/gallery", label: "Gallery" },
@@ -78,9 +79,9 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden items-center gap-7 font-mono text-xs uppercase tracking-widest lg:flex">
+        <div className="hidden items-center gap-6 font-mono text-xs uppercase tracking-widest lg:flex">
           {links.map((link) => (
-            <NavLink key={link.to} to={link.to} className="group relative py-1">
+            <NavLink key={link.to} to={link.to} end={link.end} className="group relative py-1">
               {({ isActive }) => (
                 <>
                   <span
@@ -136,6 +137,7 @@ export default function Navbar() {
                 <NavLink
                   key={link.to}
                   to={link.to}
+                  end={link.end}
                   className={({ isActive }) =>
                     `border-b border-paper/10 py-3 font-mono text-xs uppercase tracking-widest ${
                       isActive ? "text-amber" : "text-paper/80"

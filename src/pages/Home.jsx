@@ -96,7 +96,7 @@ export default function Home() {
         whileInView="show"
         viewport={{ once: true, margin: "-100px" }}
         variants={stagger}
-        className="mx-auto max-w-4xl px-6 py-20 text-center md:px-12 md:py-28"
+        className="mx-auto max-w-4xl px-6 py-14 text-center md:px-12 md:py-16"
       >
         <motion.p
           variants={fadeUp}
@@ -108,7 +108,7 @@ export default function Home() {
         <motion.h2
           variants={fadeUp}
           transition={{ duration: 0.6 }}
-          className="mt-6 font-display text-2xl font-medium leading-snug text-ink sm:text-3xl md:text-4xl"
+          className="mt-4 font-display text-2xl font-medium leading-snug text-ink sm:text-3xl md:text-4xl"
         >
           {settings?.intro_heading ||
             "Every building starts as a line on paper. We're proud of every stage between that first line and the last coat of paint."}
@@ -116,8 +116,8 @@ export default function Home() {
       </motion.section>
 
       {/* About us — diagonal-clipped image, editorial split */}
-      <section className="px-6 pb-24 md:px-12 md:pb-32">
-        <div className="mx-auto grid max-w-[90rem] grid-cols-1 gap-12 md:grid-cols-[1fr_1.1fr] md:items-center md:gap-4">
+      <section className="px-6 py-14 md:px-12 md:py-16">
+        <div className="mx-auto grid max-w-[90rem] grid-cols-1 gap-8 md:grid-cols-[1fr_1.1fr] md:items-center md:gap-12">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -128,7 +128,7 @@ export default function Home() {
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
               {settings?.about_heading || "About us"}
             </p>
-            <p className="mt-5 font-body text-lg leading-relaxed text-ink/80 md:text-xl">
+            <p className="mt-4 font-body text-lg leading-relaxed text-ink/80 md:text-xl">
               {settings?.about_body ||
                 "Meridian Builders has spent two decades turning blueprints into places people live, work, and gather."}
             </p>
@@ -163,14 +163,14 @@ export default function Home() {
       </section>
 
       {/* What we do */}
-      <section className="bg-concrete/40 px-6 py-20 md:px-12 md:py-28">
+      <section className="bg-concrete/40 px-6 py-14 md:px-12 md:py-16">
         <div className="mx-auto max-w-[90rem]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="mb-10 flex items-end justify-between"
+            className="mb-8 flex items-end justify-between"
           >
             <div>
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-steel">
@@ -223,14 +223,14 @@ export default function Home() {
       </section>
 
       {/* Featured buildings — bento grid */}
-      <section className="px-6 pb-24 md:px-12 md:pb-32">
+      <section className="px-6 py-14 md:px-12 md:py-16">
         <div className="mx-auto max-w-[90rem]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="mb-10 flex items-end justify-between"
+            className="mb-8 flex items-end justify-between"
           >
             <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
               {settings?.featured_section_heading || "Featured work"}
@@ -270,7 +270,7 @@ export default function Home() {
 
       {/* Stats — animated count-up */}
       {settings?.stats?.length > 0 && (
-        <section className="border-y border-ink/10 px-6 py-14 md:px-12 md:py-16">
+        <section className="border-y border-ink/10 px-6 py-12 md:px-12 md:py-14">
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -304,8 +304,8 @@ export default function Home() {
 
       {/* Gallery preview — infinite marquee strip */}
       {galleryPreview.length > 0 && (
-        <section className="overflow-hidden py-20 md:py-28">
-          <div className="mx-auto mb-10 flex max-w-[90rem] items-end justify-between px-6 md:px-12">
+        <section className="overflow-hidden py-14 md:py-16">
+          <div className="mx-auto mb-8 flex max-w-[90rem] items-end justify-between px-6 md:px-12">
             <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
               {settings?.gallery_section_heading || "Gallery"}
             </h3>
@@ -337,14 +337,14 @@ export default function Home() {
 
       {/* Products preview */}
       {productsPreview.length > 0 && (
-        <section className="bg-concrete/40 px-6 py-20 md:px-12 md:py-28">
+        <section className="bg-concrete/40 px-6 py-14 md:px-12 md:py-16">
           <div className="mx-auto max-w-[90rem]">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="mb-10 flex items-end justify-between"
+              className="mb-8 flex items-end justify-between"
             >
               <h3 className="font-display text-xl font-semibold text-ink sm:text-2xl">
                 {settings?.products_section_heading || "Products"}
@@ -392,7 +392,7 @@ export default function Home() {
 
       {/* Clients */}
       {settings?.clients?.length > 0 && (
-        <section className="border-t border-ink/10 px-6 py-16 md:px-12">
+        <section className="border-t border-ink/10 px-6 py-12 md:px-12 md:py-14">
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -430,7 +430,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="px-6 py-16 text-center md:px-12"
+          className="px-6 py-10 text-center md:px-12 md:py-12"
         >
           <a
             href={settings.brochure_url}
@@ -450,7 +450,7 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="relative overflow-hidden bg-ink px-6 py-20 text-center md:px-12 md:py-28"
+        className="relative overflow-hidden bg-ink px-6 py-16 text-center md:px-12 md:py-20"
       >
         <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
           <svg className="h-full w-full" preserveAspectRatio="none">
