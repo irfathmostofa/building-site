@@ -5,21 +5,14 @@ import HeroSlider from "../components/HeroSlider";
 import BuildingCard from "../components/BuildingCard";
 import { useBuildings } from "../hooks/useBuildings";
 import { supabase } from "../lib/supabaseClient";
+import { excerpt, servicePath } from "../lib/content";
 
 const SERVICE_DEMO_IMAGE = "/service-demo.svg";
-const SERVICE_TEXT_LIMIT = 110;
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0 },
 };
-
-function excerpt(text, limit = SERVICE_TEXT_LIMIT) {
-  const value = String(text ?? "").trim();
-  if (!value) return "";
-  if (value.length <= limit) return value;
-  return `${value.slice(0, limit).replace(/\s+\S*$/, "").trimEnd()}…`;
-}
 
 const stagger = {
   hidden: {},
@@ -212,30 +205,29 @@ export default function Home() {
                   transition={{ duration: 0.5 }}
                   className="overflow-hidden border border-ink/10 bg-paper"
                 >
-                  <div className="aspect-[16/10] overflow-hidden bg-concrete">
-                    <img
-                      src={s.image_url || SERVICE_DEMO_IMAGE}
-                      alt={s.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="p-6">
-                    {s.icon && <p className="text-3xl">{s.icon}</p>}
-                    <h4 className="mt-3 font-display text-lg font-semibold text-ink">
-                      {s.title}
-                    </h4>
-                    {s.description && (
-                      <p className="mt-2 font-body text-sm leading-relaxed text-ink/70">
-                        {excerpt(s.description)}
-                      </p>
-                    )}
-                    <Link
-                      to="/what-we-do"
-                      className="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-steel hover:text-ink"
-                    >
-                      View more <span aria-hidden>→</span>
-                    </Link>
-                  </div>
+                  <Link to={servicePath(s)} className="block">
+                    <div className="aspect-[16/10] overflow-hidden bg-concrete">
+                      <img
+                        src={s.image_url || SERVICE_DEMO_IMAGE}
+                        alt={s.title}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="p-6">
+                      {s.icon && <p className="text-3xl">{s.icon}</p>}
+                      <h4 className="mt-3 font-display text-lg font-semibold text-ink">
+                        {s.title}
+                      </h4>
+                      {s.description && (
+                        <p className="mt-2 font-body text-sm leading-relaxed text-ink/70">
+                          {excerpt(s.description)}
+                        </p>
+                      )}
+                      <span className="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-steel hover:text-ink">
+                        View more <span aria-hidden>→</span>
+                      </span>
+                    </div>
+                  </Link>
                 </motion.div>
               ))}
             </motion.div>

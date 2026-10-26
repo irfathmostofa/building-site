@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "../lib/supabaseClient";
+import { excerpt, servicePath } from "../lib/content";
+
+const SERVICE_DEMO_IMAGE = "/service-demo.svg";
 
 export default function WhatWeDo() {
   const [services, setServices] = useState([]);
@@ -43,24 +47,29 @@ export default function WhatWeDo() {
               transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
               className="group overflow-hidden border border-ink/10"
             >
-              {s.image_url && (
+              <Link to={servicePath(s)} className="block">
                 <div className="aspect-[16/10] overflow-hidden bg-concrete">
                   <img
-                    src={s.image_url}
+                    src={s.image_url || SERVICE_DEMO_IMAGE}
                     alt={s.title}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
-              )}
-              <div className="p-6">
-                {s.icon && <p className="text-3xl">{s.icon}</p>}
-                <h3 className="mt-3 font-display text-xl font-semibold text-ink">
-                  {s.title}
-                </h3>
-                <p className="mt-2 font-body text-sm leading-relaxed text-ink/70">
-                  {s.description}
-                </p>
-              </div>
+                <div className="p-6">
+                  {s.icon && <p className="text-3xl">{s.icon}</p>}
+                  <h3 className="mt-3 font-display text-xl font-semibold text-ink">
+                    {s.title}
+                  </h3>
+                  {s.description && (
+                    <p className="mt-2 font-body text-sm leading-relaxed text-ink/70">
+                      {excerpt(s.description)}
+                    </p>
+                  )}
+                  <span className="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-steel group-hover:text-ink">
+                    View more <span aria-hidden>→</span>
+                  </span>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>

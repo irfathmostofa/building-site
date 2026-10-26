@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+import RichTextEditor from "../../components/Richtexteditor";
+import { slugify } from "../../lib/content";
 
 const emptyBuilding = {
   name: "",
@@ -18,10 +20,6 @@ const emptyBuilding = {
   featured: false,
   sort_order: 0,
 };
-
-function slugify(text) {
-  return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
 
 export default function BuildingForm() {
   const { id } = useParams();
@@ -221,11 +219,12 @@ export default function BuildingForm() {
         </Field>
 
         <Field label="Full description (building detail page)">
-          <textarea
-            value={form.full_description ?? ""}
-            onChange={(e) => updateField("full_description", e.target.value)}
-            rows={5}
-            className="input"
+          <RichTextEditor
+            key={isNew ? "new" : id}
+            initialValue={form.full_description ?? ""}
+            onChange={(html) => updateField("full_description", html)}
+            placeholder="Describe this building. You can add headings, lists, and images."
+            minHeight="220px"
           />
         </Field>
 

@@ -110,6 +110,14 @@ body {
   text-decoration: underline;
 }
 
+.rte-content img,
+.rte-article img {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  display: block;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

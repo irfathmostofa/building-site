@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+import RichTextEditor from "../../components/Richtexteditor";
+import { slugify } from "../../lib/content";
 
 const empty = {
   name: "", slug: "", category_id: "", description: "",
   image: "", price_label: "", featured: false, sort_order: 0,
 };
-
-function slugify(text) {
-  return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
 
 export default function ProductForm() {
   const { id } = useParams();
@@ -84,7 +82,13 @@ export default function ProductForm() {
         </div>
 
         <Field label="Description">
-          <textarea value={form.description ?? ""} onChange={(e) => updateField("description", e.target.value)} rows={4} className="input" />
+          <RichTextEditor
+            key={isNew ? "new" : id}
+            initialValue={form.description ?? ""}
+            onChange={(html) => updateField("description", html)}
+            placeholder="Describe this product. You can add headings, lists, and images."
+            minHeight="220px"
+          />
         </Field>
 
         <Field label="Image URL">

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
+import RichTextEditor from "../../components/Richtexteditor";
+import { slugify } from "../../lib/content";
 
 const empty = {
   title: "",
@@ -10,10 +12,6 @@ const empty = {
   cover_image: "",
   published: false,
 };
-
-function slugify(text) {
-  return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
 
 export default function BlogForm() {
   const { id } = useParams();
@@ -112,11 +110,11 @@ export default function BlogForm() {
         </Field>
 
         <Field label="Content">
-          <textarea
-            value={form.content ?? ""}
-            onChange={(e) => updateField("content", e.target.value)}
-            rows={12}
-            className="input"
+          <RichTextEditor
+            key={isNew ? "new" : id}
+            initialValue={form.content ?? ""}
+            onChange={(html) => updateField("content", html)}
+            placeholder="Write your post. You can add headings, lists, and images."
           />
         </Field>
 

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useBuilding } from "../hooks/useBuildings";
 import Lightbox from "../components/Lightbox";
+import RichContent from "../components/RichContent";
 
 export default function BuildingDetail() {
   const { slug } = useParams();
@@ -72,9 +73,10 @@ export default function BuildingDetail() {
 
       {/* Description */}
       <section className="mx-auto max-w-3xl px-6 py-20 md:px-12">
-        <p className="font-body text-lg leading-relaxed text-ink/80">
-          {building.full_description ?? building.short_description}
-        </p>
+        <RichContent
+          html={building.full_description ?? building.short_description}
+          className="font-body text-lg leading-relaxed text-ink/80"
+        />
         {building.floor_plan_url && (
           <a
             href={building.floor_plan_url}

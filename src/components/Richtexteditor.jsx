@@ -3,14 +3,11 @@ import { useRef } from "react";
 export default function RichTextEditor({
   initialValue = "",
   onChange,
-  placeholder = "Write your post…",
+  placeholder = "Write your content…",
+  minHeight = "320px",
 }) {
   const ref = useRef(null);
-  const mounted = useRef(false);
-
-  if (!mounted.current) {
-    mounted.current = true;
-  }
+  const fileRef = useRef(null);
 
   function setInitial(node) {
     ref.current = node;
@@ -29,6 +26,33 @@ export default function RichTextEditor({
   function handleLink() {
     const url = window.prompt("Link URL (https://…)");
     if (url) exec("createLink", url);
+  }
+
+  function insertImage(src) {
+    if (!src) return;
+    exec("insertImage", src);
+    const images = ref.current?.querySelectorAll("img");
+    const last = images?.[images.length - 1];
+    if (last) {
+      last.setAttribute("alt", "");
+      last.style.maxWidth = "100%";
+      last.style.height = "auto";
+    }
+    onChange?.(ref.current?.innerHTML ?? "");
+  }
+
+  function handleImageUrl() {
+    const url = window.prompt("Image URL (https://…)");
+    if (url) insertImage(url);
+  }
+
+  function handleImageFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => insertImage(String(reader.result || ""));
+    reader.readAsDataURL(file);
   }
 
   return (
@@ -86,10 +110,23 @@ export default function RichTextEditor({
         />
         <Divider />
         <ToolbarButton onClick={handleLink} label="Link" title="Insert link" />
+        <ToolbarButton onClick={handleImageUrl} label="Image" title="Insert image from URL" />
+        <ToolbarButton
+          onClick={() => fileRef.current?.click()}
+          label="Upload"
+          title="Upload image"
+        />
         <ToolbarButton
           onClick={() => exec("removeFormat")}
           label="Clear"
           title="Clear formatting"
+        />
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageFile}
         />
       </div>
       <div
@@ -97,7 +134,8 @@ export default function RichTextEditor({
         contentEditable
         onInput={() => onChange?.(ref.current.innerHTML)}
         data-placeholder={placeholder}
-        className="rte-content min-h-[320px] px-4 py-4 font-body text-ink outline-none"
+        className="rte-content px-4 py-4 font-body text-ink outline-none"
+        style={{ minHeight }}
       />
     </div>
   );

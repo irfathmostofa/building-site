@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import RichContent from "../components/RichContent";
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -58,7 +59,10 @@ export default function ProductDetail() {
           {product.price_label && (
             <p className="mt-3 font-mono text-sm text-ink/70">{product.price_label}</p>
           )}
-          <p className="mt-6 font-body leading-relaxed text-ink/80">{product.description}</p>
+          <RichContent
+            html={product.description}
+            className="mt-6 font-body leading-relaxed text-ink/80"
+          />
           <Link
             to="/contact"
             className="mt-8 inline-block bg-ink px-8 py-3 font-mono text-xs uppercase tracking-widest text-paper hover:bg-steel"

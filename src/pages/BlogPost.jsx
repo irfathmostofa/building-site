@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+import RichContent from "../components/RichContent";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -65,9 +66,10 @@ export default function BlogPost() {
           />
         )}
 
-        <div className="mt-10 whitespace-pre-wrap font-body text-lg leading-relaxed text-ink/80">
-          {post.content}
-        </div>
+        <RichContent
+          html={post.content}
+          className="mt-10 font-body text-lg leading-relaxed text-ink/80"
+        />
       </div>
     </article>
   );

@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import WhatWeDo from "./pages/WhatWeDo";
+import ServiceDetail from "./pages/ServiceDetail";
 import Board from "./pages/Board";
 import Gallery from "./pages/Gallery";
 import Products from "./pages/Products";
@@ -30,6 +31,7 @@ import ProductForm from "./pages/admin/ProductForm";
 import ProductCategoriesManager from "./pages/admin/ProductCategoriesManager";
 import GalleryManager from "./pages/admin/GalleryManager";
 import ServicesManager from "./pages/admin/ServicesManager";
+import ServiceForm from "./pages/admin/ServiceForm";
 import BoardManager from "./pages/admin/BoardManager";
 import BlogManager from "./pages/admin/BlogManager";
 import BlogForm from "./pages/admin/BlogForm";
@@ -114,6 +116,14 @@ export default function App() {
           }
         />
         <Route
+          path="/what-we-do/:slug"
+          element={
+            <SiteLayout>
+              <ServiceDetail />
+            </SiteLayout>
+          }
+        />
+        <Route
           path="/board"
           element={
             <SiteLayout>
@@ -177,6 +187,7 @@ export default function App() {
           />
           <Route path="gallery" element={<GalleryManager />} />
           <Route path="services" element={<ServicesManager />} />
+          <Route path="services/:id" element={<ServiceForm />} />
           <Route path="board" element={<BoardManager />} />
           <Route path="blog" element={<BlogManager />} />
           <Route path="blog/:id" element={<BlogForm />} />
